@@ -83,7 +83,7 @@
 </head>
 <body class="pb-24">
 
-    <!-- HEADER (REDESIGNED: Premium, Sharp, Mature Blue) -->
+    <!-- HEADER -->
     <header class="sticky top-0 z-50 flex flex-col shadow-2xl bg-[#061224] text-white transition-all">
         <div class="px-4 py-3 flex justify-between items-center">
             <!-- Logo -->
@@ -99,7 +99,7 @@
                 </button>
                 <button type="button" class="relative p-2 hover:bg-white/10 rounded-full transition-colors" onclick="nav('cart')">
                     <i data-lucide="shopping-bag" class="w-5 h-5 text-gray-300 hover:text-white transition-colors"></i>
-                    <div id="badge" class="hidden absolute top-0 right-0 bg-orange-500 text-white w-4 h-4 rounded-full text-[9px] flex items-center justify-center font-bold border border-[#061224] shadow-md transition-transform duration-300">0</div>
+                    <div id="badge" class="hidden absolute -top-1 -right-1 bg-red-600 text-white min-w-[18px] h-[18px] px-1 rounded-full text-[10px] flex items-center justify-center font-bold border-2 border-[#061224] shadow-md transition-all duration-300 z-10">0</div>
                 </button>
             </div>
         </div>
@@ -410,7 +410,7 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="text-[10px] font-bold text-gray-500 uppercase ml-1">State / Region</label>
-                                <select id="ship-state" class="input w-full bg-white h-[50px] !mb-0">
+                                <select id="ship-state" class="input w-full bg-white h-[50px] !mb-0" onchange="calculateShipping()">
                                     <option value="">Select State</option><option value="Abia">Abia</option><option value="Adamawa">Adamawa</option><option value="Akwa Ibom">Akwa Ibom</option><option value="Anambra">Anambra</option><option value="Bauchi">Bauchi</option><option value="Bayelsa">Bayelsa</option><option value="Benue">Benue</option><option value="Borno">Borno</option><option value="Cross River">Cross River</option><option value="Delta">Delta</option><option value="Ebonyi">Ebonyi</option><option value="Edo">Edo</option><option value="Ekiti">Ekiti</option><option value="Enugu">Enugu</option><option value="FCT - Abuja">FCT - Abuja</option><option value="Gombe">Gombe</option><option value="Imo">Imo</option><option value="Jigawa">Jigawa</option><option value="Kaduna">Kaduna</option><option value="Kano">Kano</option><option value="Katsina">Katsina</option><option value="Kebbi">Kebbi</option><option value="Kogi">Kogi</option><option value="Kwara">Kwara</option><option value="Lagos">Lagos</option><option value="Nasarawa">Nasarawa</option><option value="Niger">Niger</option><option value="Ogun">Ogun</option><option value="Ondo">Ondo</option><option value="Osun">Osun</option><option value="Oyo">Oyo</option><option value="Plateau">Plateau</option><option value="Rivers">Rivers</option><option value="Sokoto">Sokoto</option><option value="Taraba">Taraba</option><option value="Yobe">Yobe</option><option value="Zamfara">Zamfara</option>
                                 </select>
                             </div>
@@ -438,7 +438,10 @@
             </div>
             <div class="fixed bottom-0 left-0 w-full p-4 bg-white border-t border-gray-200 z-50 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
                 <div class="max-w-lg mx-auto flex items-center justify-between gap-4">
-                    <div><div class="text-[10px] text-gray-500 uppercase font-bold">Total to Pay</div><div class="text-xl font-black text-slate-900" id="checkout-total-display">₦0</div></div>
+                    <div>
+                        <div class="text-[10px] text-gray-500 uppercase font-bold" id="checkout-shipping-display">Shipping: ₦0</div>
+                        <div class="text-xl font-black text-slate-900" id="checkout-total-display">₦0</div>
+                    </div>
                     <button type="button" onclick="processPayment()" id="btn-pay" class="flex-1 bg-orange-600 text-white py-4 rounded-xl font-black shadow-xl hover:bg-orange-700 transition-colors text-lg flex justify-center items-center gap-2"><i data-lucide="lock" class="w-5 h-5"></i> Confirm Order</button>
                 </div>
             </div>
@@ -599,6 +602,25 @@
         </div>
     </footer>
 
+    <!-- STICKY MOBILE FOOTER NAV -->
+    <div id="footer-nav" class="fixed bottom-0 w-full bg-white/95 backdrop-blur border-t border-gray-100 flex justify-around py-4 z-50 shadow-2xl">
+        <button type="button" onclick="nav('home')" id="nav-home" class="flex flex-col items-center justify-center w-1/3 text-gray-500 transition hover:scale-105">
+            <i data-lucide="home" class="w-6 h-6 mb-1"></i>
+            <span class="text-[10px] font-bold">Home</span>
+        </button>
+        <button type="button" onclick="nav('cart')" id="nav-cart" class="flex flex-col items-center justify-center w-1/3 text-gray-500 transition hover:scale-105">
+            <div class="relative">
+                <i data-lucide="shopping-cart" class="w-6 h-6 mb-1 transition-all duration-300"></i>
+                <div id="footer-badge" class="hidden absolute -top-2 -right-2 bg-red-600 text-white min-w-[18px] h-[18px] px-1 rounded-full text-[10px] flex items-center justify-center font-bold border-2 border-white shadow-md transition-all duration-300 z-10">0</div>
+            </div>
+            <span class="text-[10px] font-bold block">Cart</span>
+        </button>
+        <button type="button" onclick="handleProfileClick()" id="nav-account" class="flex flex-col items-center justify-center w-1/3 text-gray-500 transition hover:scale-105">
+            <i data-lucide="user" class="w-6 h-6 mb-1"></i>
+            <span class="text-[10px] font-bold">Account</span>
+        </button>
+    </div>
+
 <script>
     // --- CORE SETUP & STATE MANAGEMENT ---
     const FIREBASE_CONFIG = { apiKey: "AIzaSyD35odIjfILahBo2JEGWlCVChmfjHq6Rng", authDomain: "boldng-web1.firebaseapp.com", projectId: "boldng-web1", storageBucket: "boldng-web1.firebasestorage.app", messagingSenderId: "451061811783", appId: "1:451061811783:web:b5d2870e86b7cdc517bf62", measurementId: "G-7QBPQ4FSRS" };
@@ -621,26 +643,24 @@
     let products = [], cart = [], activeCat = 'all', files = [], editingId = null;
     let currentUser = null; let state_orders = []; let ordersUnsubscribe = null; let promoInterval = null; let currentPromoIndex = 0;
     let platformSettings = { email: 'help@bold.ng', phone: '0708 063 5700', whatsapp: '2347080635700', address: '123 Commerce Avenue\nLagos, Nigeria', facebook: 'https://facebook.com/boldng', twitter: 'https://twitter.com/boldng', instagram: 'https://instagram.com/bold.ng' };
+    let currentShippingFee = 0;
 
-    // --- NEW SMART ROUTER ENGINE ---
+    // --- REPAIRED SMART ROUTER ENGINE ---
     window.handleRouter = function() {
         let hash = window.location.hash.replace('#', '') || 'home';
         
-        // Hide Overlays
         ['view-cart', 'view-checkout', 'view-details', 'view-transaction', 'view-invoice'].forEach(id => {
             const el = document.getElementById(id); if(el) el.classList.add('hidden');
         });
         
-        // Hide Main Views
         document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
 
         let mainView = hash;
 
-        // Dynamic Sub-routing
         if (hash.startsWith('product/')) {
             const id = hash.split('/')[1];
             if (products.length > 0) renderProductDetails(id);
-            mainView = 'home'; // Show home behind it
+            mainView = 'home';
             document.getElementById('view-details').classList.remove('hidden');
         } else if (hash === 'cart') {
             renderCartUI();
@@ -658,47 +678,79 @@
             document.getElementById('view-transaction').classList.remove('hidden');
         }
 
-        // Show specific main view
         const target = document.getElementById('view-' + mainView);
         if(target) target.classList.remove('hidden');
 
-        // Update Bottom Nav UI
-        ['nav-home', 'nav-account'].forEach(id => {
+        // SAFELY Update Bottom Nav Colors without destroying layout!
+        ['nav-home', 'nav-cart', 'nav-account'].forEach(id => {
             const el = document.getElementById(id);
-            if(el) el.className = "text-center w-1/3 text-gray-500 transition hover:scale-105";
+            if(el) { el.classList.remove('text-orange-500'); el.classList.add('text-gray-500'); }
         });
-        const cartNav = document.querySelector('#footer-nav button:nth-child(2)');
-        if(cartNav) cartNav.className = "text-center w-1/3 text-gray-500 transition hover:scale-105 flex flex-col items-center justify-center";
 
-        if(mainView === 'home') { const nh = document.getElementById('nav-home'); if(nh) nh.className = "text-center w-1/3 text-orange-500 transition hover:scale-105"; }
-        if(mainView === 'account' || mainView === 'dashboard') { const na = document.getElementById('nav-account'); if(na) na.className = "text-center w-1/3 text-orange-500 transition hover:scale-105"; }
-        if(hash === 'cart' && cartNav) { cartNav.className = "text-center w-1/3 text-orange-500 transition hover:scale-105 flex flex-col items-center justify-center"; }
+        if (mainView === 'home' && hash !== 'cart') { 
+            const nh = document.getElementById('nav-home'); 
+            if(nh) { nh.classList.remove('text-gray-500'); nh.classList.add('text-orange-500'); } 
+        }
+        else if (mainView === 'account' || mainView === 'dashboard') { 
+            const na = document.getElementById('nav-account'); 
+            if(na) { na.classList.remove('text-gray-500'); na.classList.add('text-orange-500'); } 
+        }
+        else if (hash === 'cart') { 
+            const nc = document.getElementById('nav-cart'); 
+            if(nc) { nc.classList.remove('text-gray-500'); nc.classList.add('text-orange-500'); } 
+        }
 
-        // Manage Footers
         const isBusiness = ['login', 'vendor-signup', 'dashboard', 'merchant', 'finance', 'admin', 'hr', 'support', 'vice', 'affiliate', 'logistics', 'success', 'terms'].includes(mainView);
-        const fNav = document.getElementById('footer-nav'); if(fNav) fNav.style.display = isBusiness && mainView !== 'success' && mainView !== 'terms' ? 'none' : 'flex';
-        const mFoot = document.getElementById('main-footer'); if(mFoot) mFoot.style.display = isBusiness && mainView !== 'terms' ? 'none' : 'block';
+        
+        const fNav = document.getElementById('footer-nav'); 
+        if(fNav) {
+            if (isBusiness && mainView !== 'success' && mainView !== 'terms') { fNav.style.display = 'none'; } 
+            else { fNav.style.display = 'flex'; }
+        }
+        
+        const mFoot = document.getElementById('main-footer'); 
+        if(mFoot) mFoot.style.display = (isBusiness && mainView !== 'terms') ? 'none' : 'block';
 
-        // Load specific dashboard data
         if(mainView === 'admin') loadAdmin(); 
         if(mainView === 'finance') loadFinance(); 
         if(mainView === 'logistics') renderLogistics();
         
-        lucide.createIcons(); 
+        if (typeof lucide !== 'undefined') lucide.createIcons(); 
         window.scrollTo(0,0);
     };
 
     window.addEventListener('hashchange', handleRouter);
-
     window.nav = function(view) { window.location.hash = view; }
-    
-    // Smart native back button handler
-    window.goBack = function() {
-        if (window.history.length > 1 && window.location.hash !== '') { window.history.back(); } 
-        else { window.location.hash = 'home'; }
-    }
+    window.goBack = function() { if (window.history.length > 1 && window.location.hash !== '') { window.history.back(); } else { window.location.hash = 'home'; } }
 
-    window.updateCartBadge = function() { const count = cart.length; const b1 = document.getElementById('badge'); const b2 = document.getElementById('footer-badge'); if (b1) { b1.innerText = count; b1.style.display = count ? 'flex' : 'none'; b1.classList.add('scale-150'); setTimeout(() => b1.classList.remove('scale-150'), 300); } if (b2) { b2.innerText = count; b2.style.display = count ? 'flex' : 'none'; b2.classList.add('scale-150'); setTimeout(() => b2.classList.remove('scale-150'), 300); } }
+    // PERFECTED: INSTANT AMAZON-STYLE CART BADGE UPDATER
+    window.updateCartBadge = function() { 
+        const count = cart.length; 
+        const b1 = document.getElementById('badge'); 
+        const b2 = document.getElementById('footer-badge'); 
+        
+        if (b1) { 
+            b1.innerText = count; 
+            if (count > 0) {
+                b1.classList.remove('hidden'); // Forces it to show immediately
+                b1.classList.add('scale-150'); 
+                setTimeout(() => b1.classList.remove('scale-150'), 400); 
+            } else {
+                b1.classList.add('hidden'); // Hides it if cart is empty
+            }
+        } 
+        
+        if (b2) { 
+            b2.innerText = count; 
+            if (count > 0) {
+                b2.classList.remove('hidden'); // Forces it to show immediately
+                b2.classList.add('scale-150'); 
+                setTimeout(() => b2.classList.remove('scale-150'), 400); 
+            } else {
+                b2.classList.add('hidden'); // Hides it if cart is empty
+            }
+        } 
+    }
     window.updateCart = function() { localStorage.setItem('bold_cart', JSON.stringify(cart)); window.updateCartBadge(); }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -736,7 +788,6 @@
                         document.querySelectorAll('.admin-only').forEach(el => el.style.display = currentUser.role === 'admin' ? 'flex' : 'none');
                         const btnEditFoot = document.getElementById('admin-footer-edit'); if(btnEditFoot) btnEditFoot.style.display = currentUser.role === 'admin' ? 'flex' : 'none';
 
-                        // Check initial routing after login
                         const activeView = Array.from(document.querySelectorAll('.view-section')).find(v => !v.classList.contains('hidden'))?.id;
                         if(['view-login', 'view-vendor-signup', 'view-account'].includes(activeView)) nav('dashboard');
                         listenToOrders();
@@ -751,14 +802,12 @@
                     products = []; snap.forEach(d => { let p=d.data(); p.id=d.id; products.push(p); }); 
                     renderHome(); 
                     if(!document.getElementById('view-merchant').classList.contains('hidden')) loadInventory(); 
-                    
-                    // If someone lands directly on a product URL, it waits for this fetch, then renders the product!
                     if (window.location.hash.startsWith('#product/')) handleRouter();
                 });
             }
         } catch (e) { console.error(e); }
         
-        handleRouter(); // Initial Trigger on Load
+        handleRouter(); 
     });
 
     function updateSettingsUI() {
@@ -853,7 +902,7 @@
             return `
             <div class="${cardClasses}" onclick="window.location.hash='product/${p.id}'">
                 <div class="h-36 bg-gray-50 relative overflow-hidden flex items-center justify-center p-2"><img src="${p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/150'}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500">${badge}</div>
-                <div class="p-3 bg-white border-t border-gray-100"><div class="font-bold text-xs truncate text-slate-800">${p.title}</div>${ratingHtml}<div class="text-[10px] text-gray-500 mt-0.5 truncate border-b border-gray-50 pb-2 mb-2">By ${p.storeName || 'Bold Store'}</div><div class="flex items-end justify-between"><div><div class="font-black text-slate-900 text-sm">₦${Number(p.price).toLocaleString()}</div>${p.oldPrice ? `<div class="text-[9px] text-gray-400 line-through">₦${Number(p.oldPrice).toLocaleString()}</div>` : ''}</div><button type="button" onclick="event.stopPropagation(); addToCart('${p.id}')" class="bg-orange-50 text-orange-600 px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 hover:bg-orange-500 hover:text-white transition-colors"><i data-lucide="shopping-bag" class="w-3 h-3"></i> Add</button></div></div>
+                <div class="p-3 bg-white border-t border-gray-100"><div class="font-bold text-xs truncate text-slate-800">${p.title}</div>${ratingHtml}<div class="text-[10px] text-gray-500 mt-0.5 truncate border-b border-gray-50 pb-2 mb-2">By ${p.storeName || 'Bold Store'}</div><div class="flex items-end justify-between"><div><div class="font-black text-slate-900 text-sm">₦${Number(p.price).toLocaleString()}</div>${p.oldPrice ? `<div class="text-[9px] text-gray-400 line-through">₦${Number(p.oldPrice).toLocaleString()}</div>` : ''}</div><button type="button" onclick="event.stopPropagation(); addToCart('${p.id}', this)" class="bg-orange-50 text-orange-600 px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 hover:bg-orange-500 hover:text-white transition-all duration-300"><i data-lucide="shopping-bag" class="w-3 h-3"></i> <span class="btn-text">Add</span></button></div></div>
             </div>`
         }).join('') || `<p class="col-span-2 text-center p-10 text-gray-400">No products found here yet.</p>`;
         lucide.createIcons();
@@ -935,7 +984,7 @@
             <div class="p-5 bg-white relative z-10 min-h-[50vh] pb-32">
                 ${merchantControls}
                 <div class="flex flex-wrap gap-2 mb-3">${quickBadges}</div><h1 class="text-xl font-bold text-slate-900 leading-snug mb-1">${p.title}</h1>${topRatingHtml}<div class="mb-6 p-4 bg-slate-50 border border-slate-100 rounded-xl"><div class="flex items-center mb-1"><div class="text-3xl font-black text-slate-900">₦${Number(p.price).toLocaleString()}</div>${discountBadge}</div>${p.oldPrice ? `<div class="text-sm text-gray-500 line-through">List Price: ₦${Number(p.oldPrice).toLocaleString()}</div>` : ''}${p.stock ? `<div class="text-xs font-bold text-green-600 mt-2">In Stock (${p.stock} units available)</div>` : `<div class="text-xs text-gray-500 mt-2">Stock availability varies</div>`}</div>${selectionHtml}${specSection}<div class="mb-8"><h3 class="font-bold text-lg text-slate-900 mb-3 border-b pb-2">About this item</h3><p class="text-gray-700 text-sm leading-relaxed whitespace-pre-line">${p.description || "No description provided."}</p></div>${reviewSection}</div>
-            <div class="fixed bottom-0 left-0 w-full p-4 bg-white border-t border-gray-200 z-[70] shadow-[0_-10px_20px_rgba(0,0,0,0.05)] flex gap-3"><button type="button" class="w-14 h-14 rounded-xl border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-orange-500 hover:text-orange-500 transition-colors"><i data-lucide="message-circle" class="w-6 h-6"></i></button><button type="button" onclick="addToCart('${p.id}')" class="flex-1 bg-orange-500 text-white rounded-xl font-black text-lg shadow-lg hover:bg-orange-600 transition-colors flex justify-center items-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> Add to Cart</button></div>`;
+            <div class="fixed bottom-0 left-0 w-full p-4 bg-white border-t border-gray-200 z-[70] shadow-[0_-10px_20px_rgba(0,0,0,0.05)] flex gap-3"><button type="button" class="w-14 h-14 rounded-xl border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-orange-500 hover:text-orange-500 transition-colors"><i data-lucide="message-circle" class="w-6 h-6"></i></button><button type="button" onclick="addToCart('${p.id}', this)" class="flex-1 bg-orange-500 text-white rounded-xl font-black text-lg shadow-lg hover:bg-orange-600 transition-all duration-300 flex justify-center items-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> <span class="btn-text">Add to Cart</span></button></div>`;
     }
     
     window.setRating = function(val) { window.currentReviewRating = val; for(let i=1; i<=5; i++) { const starBtn = document.getElementById('star-btn-'+i); const icon = starBtn.querySelector('svg'); if(i <= val) { starBtn.classList.add('text-orange-400'); starBtn.classList.remove('text-gray-300'); icon.classList.add('fill-current'); } else { starBtn.classList.remove('text-orange-400'); starBtn.classList.add('text-gray-300'); icon.classList.remove('fill-current'); } } }
@@ -946,7 +995,40 @@
     async function loadAdmin() { if (!currentUser || currentUser.role !== 'admin') return; let totalRev = 0; let ordersHtml = ''; if(state_orders && state_orders.length > 0) { state_orders.forEach(d => { if(d.payment?.status === 'Paid') totalRev += d.total; const statusColor = d.payment?.status === 'Paid' ? 'text-green-600' : 'text-orange-500'; ordersHtml += `<div class="flex justify-between items-center py-3 px-4 border-b border-gray-50 cursor-pointer" onclick="window.location.hash='tx/${d.docId}'"><div><div class="text-xs font-bold">#${d.docId.slice(0,6)}</div><div class="text-[10px] text-gray-400">${d.date.split('T')[0]} • ${d.customer?.name||'Guest'}</div></div><div class="text-right"><div class="text-sm font-bold">₦${d.total.toLocaleString()}</div><div class="text-[10px] font-bold ${statusColor}">${d.payment?.status}</div></div></div>`; }); } document.getElementById('admin-total-rev').innerText = '₦' + totalRev.toLocaleString(); document.getElementById('admin-list').innerHTML = ordersHtml || '<div class="p-4 text-center text-xs text-gray-400">No orders yet.</div>'; try { const usersSnap = await window.db.collection('users').where('role', '==', 'vendor').get(); document.getElementById('admin-total-vendors').innerText = usersSnap.size; let vendorsHtml = ''; usersSnap.forEach(doc => { const v = doc.data(); const joinedDate = v.createdAt?.toDate ? v.createdAt.toDate().toLocaleDateString() : 'Recently'; vendorsHtml += `<div class="flex justify-between items-center py-3 px-4 border-b border-gray-50"><div><div class="text-sm font-bold text-slate-800">${v.storeName}</div><div class="text-[10px] text-gray-500">${v.email}</div></div><div class="text-right"><div class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">Joined: ${joinedDate}</div></div></div>`; }); document.getElementById('admin-vendor-list').innerHTML = vendorsHtml || '<div class="p-4 text-center text-xs text-gray-400">No vendors found.</div>'; } catch (error) { console.error("Error loading vendors:", error); document.getElementById('admin-vendor-list').innerHTML = '<div class="p-4 text-center text-xs text-red-400">Error loading vendors.</div>'; } }
     function renderLogistics() { document.getElementById('logistics-list').innerHTML = state_orders?.filter(o=>o.status!=='Delivered').map(o=>`<div class="card mb-3 border-l-4 border-orange-500 p-3"><div class="flex justify-between font-bold text-sm"><span>#${o.docId.slice(0,4)}</span><span class="text-orange-500">${o.status}</span></div><div class="text-xs mt-2">${o.customer?.address}</div><button onclick="window.db.collection('orders').doc('${o.docId}').update({status:'Delivered'})" class="mt-3 w-full bg-[#061224] text-white text-xs py-2 rounded">Mark Delivered</button></div>`).join('') || '<p>No pending deliveries</p>'; }
 
-    window.addToCart = function(id) { cart.push(products.find(x => x.id === id)); updateCart(); showToast("Added to Cart"); }
+    window.addToCart = function(id, btnElement) { 
+        cart.push(products.find(x => x.id === id)); 
+        updateCart(); 
+        
+        // Advanced Visual Feedback
+        if (btnElement) {
+            const originalHtml = btnElement.innerHTML;
+            const isLarge = btnElement.classList.contains('text-lg');
+            
+            // Turn button green and show checkmark
+            btnElement.innerHTML = `<i data-lucide="check-circle" class="${isLarge ? 'w-5 h-5' : 'w-4 h-4'}"></i> <span class="btn-text font-black">Added!</span>`;
+            btnElement.style.backgroundColor = '#16a34a'; // Green 600
+            btnElement.style.color = 'white';
+            lucide.createIcons();
+
+            // Make Cart Icons "Jump"
+            const navCartIcon = document.querySelector('#nav-cart i');
+            const headerCartIcon = document.querySelector('header .lucide-shopping-bag');
+            if(navCartIcon) { navCartIcon.classList.add('animate-bounce', 'text-orange-500'); navCartIcon.classList.remove('text-gray-500'); }
+            if(headerCartIcon) { headerCartIcon.classList.add('animate-bounce', 'text-white'); headerCartIcon.classList.remove('text-gray-300'); }
+
+            setTimeout(() => {
+                btnElement.innerHTML = originalHtml;
+                btnElement.style.backgroundColor = '';
+                btnElement.style.color = '';
+                lucide.createIcons();
+                
+                if(navCartIcon && window.location.hash !== '#cart') { navCartIcon.classList.remove('animate-bounce', 'text-orange-500'); navCartIcon.classList.add('text-gray-500'); }
+                if(headerCartIcon) { headerCartIcon.classList.remove('animate-bounce', 'text-white'); headerCartIcon.classList.add('text-gray-300'); }
+            }, 1200);
+        } else {
+            showToast("Item added to cart!");
+        }
+    }
     window.removeFromCart = function(id) { const index = cart.findIndex(p => p.id === id); if (index > -1) { cart.splice(index, 1); updateCart(); renderCartUI(); } }
 
     window.renderCartUI = function() { 
@@ -961,10 +1043,44 @@
     }
     
     let paymentMethod = 'card';
-    window.renderCheckoutUI = function() { 
-        const total = cart.reduce((a,b)=>a+Number(b.price),0); document.getElementById('checkout-total-display').innerText = '₦' + total.toLocaleString();
-        const allDigital = cart.every(p => p.isDigital); if(allDigital) { document.getElementById('physical-address-box').classList.add('hidden'); document.getElementById('opt-pod').classList.add('hidden'); selectPay('card'); } else { document.getElementById('physical-address-box').classList.remove('hidden'); document.getElementById('opt-pod').classList.remove('hidden'); } 
+
+    window.calculateShipping = function() {
+        const allDigital = cart.every(p => p.isDigital);
+        if (allDigital) {
+            currentShippingFee = 0;
+        } else {
+            const state = document.getElementById('ship-state').value;
+            if (!state) {
+                currentShippingFee = 0;
+            } else if (state === 'Lagos') {
+                currentShippingFee = 3000;
+            } else {
+                currentShippingFee = 5000;
+            }
+        }
+        window.updateCheckoutTotal();
     }
+
+    window.updateCheckoutTotal = function() {
+        const subtotal = cart.reduce((a,b) => a + Number(b.price), 0);
+        const finalTotal = subtotal + currentShippingFee;
+        document.getElementById('checkout-shipping-display').innerText = currentShippingFee > 0 ? `Shipping: ₦${currentShippingFee.toLocaleString()}` : `Shipping: Free`;
+        document.getElementById('checkout-total-display').innerText = '₦' + finalTotal.toLocaleString();
+    }
+
+    window.renderCheckoutUI = function() { 
+        const allDigital = cart.every(p => p.isDigital); 
+        if(allDigital) { 
+            document.getElementById('physical-address-box').classList.add('hidden'); 
+            document.getElementById('opt-pod').classList.add('hidden'); 
+            selectPay('card'); 
+        } else { 
+            document.getElementById('physical-address-box').classList.remove('hidden'); 
+            document.getElementById('opt-pod').classList.remove('hidden'); 
+        } 
+        calculateShipping(); // Auto-calculates shipping when checkout opens
+    }
+    
     window.selectPay = function(m) { paymentMethod = m; document.querySelectorAll('.pay-opt').forEach(el => el.classList.remove('selected')); const selectedOpt = document.getElementById('opt-' + m); if (selectedOpt) { selectedOpt.classList.add('selected'); } if(m === 'bank') document.getElementById('bank-details').classList.remove('hidden'); else document.getElementById('bank-details').classList.add('hidden'); }
 
     window.processPayment = function() { 
@@ -973,7 +1089,8 @@
         if(!name || !phone || !email) return alert("Please fill in your Full Name, Phone, and Email."); 
         if(!allDigital && (!state || !city || !addr)) return alert("Please complete your full Delivery Details (State, City, Address)."); 
         
-        const total = cart.reduce((a,b)=>a+Number(b.price),0); 
+        const subtotal = cart.reduce((a,b)=>a+Number(b.price),0); 
+        const total = subtotal + currentShippingFee; // Includes shipping
         const customerInfo = { name: name, phone: phone, email: email, address: allDigital ? 'Digital Delivery' : addr, state: allDigital ? 'N/A' : state, city: allDigital ? 'N/A' : city, notes: notes || '' }; 
         
         const btn = document.getElementById('btn-pay'); btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Processing...`; btn.disabled = true; lucide.createIcons(); 
@@ -982,16 +1099,16 @@
             const paystackKey = 'pk_live_YOUR_PAYSTACK_LIVE_KEY_HERE'; 
             if (paystackKey.includes('YOUR_PAYSTACK')) {
                 console.warn("Using Test Environment: Simulating payment."); showToast("Demo Mode: Simulating Payment...");
-                setTimeout(() => { saveOrder({method:'Paystack Online', ref: 'TEST-REF-'+Date.now(), status:'Paid', amount:total}, customerInfo); }, 1500);
+                setTimeout(() => { saveOrder({method:'Paystack Online', ref: 'TEST-REF-'+Date.now(), status:'Paid', amount:total, shipping: currentShippingFee}, customerInfo); }, 1500);
             } else {
                 let handler = PaystackPop.setup({
                     key: paystackKey, email: email, amount: total * 100, currency: 'NGN', ref: 'BOLD-' + Math.floor((Math.random() * 1000000000) + 1), 
-                    callback: function(response) { saveOrder({method:'Paystack Online', ref: response.reference, status:'Paid', amount:total}, customerInfo); },
+                    callback: function(response) { saveOrder({method:'Paystack Online', ref: response.reference, status:'Paid', amount:total, shipping: currentShippingFee}, customerInfo); },
                     onClose: function() { btn.innerHTML = `<i data-lucide="lock" class="w-5 h-5"></i> Confirm Order`; btn.disabled = false; lucide.createIcons(); showToast("Payment window closed."); }
                 }); handler.openIframe();
             }
-        } else if (paymentMethod === 'bank') { saveOrder({method:'Bank Transfer', ref:'BT-'+Date.now(), status:'Pending Verification', amount:total}, customerInfo); 
-        } else { saveOrder({method:'Pay On Delivery', ref:'POD-'+Date.now(), status:'Pending Payment', amount:total}, customerInfo); } 
+        } else if (paymentMethod === 'bank') { saveOrder({method:'Bank Transfer', ref:'BT-'+Date.now(), status:'Pending Verification', amount:total, shipping: currentShippingFee}, customerInfo); 
+        } else { saveOrder({method:'Pay On Delivery', ref:'POD-'+Date.now(), status:'Pending Payment', amount:total, shipping: currentShippingFee}, customerInfo); } 
     }
 
     window.renderTransactionUI = function(id) { 
@@ -1021,12 +1138,13 @@
         if(!tx) return; let txId = tx.docId || tx.id; let itemCounts = {}; tx.items.forEach(i => { if(itemCounts[i.id]) { itemCounts[i.id].qty += 1; itemCounts[i.id].total += Number(i.price); } else { itemCounts[i.id] = { ...i, qty: 1, total: Number(i.price) }; } });
         let invoiceItems = ''; Object.values(itemCounts).forEach(i => { invoiceItems += `<tr class="border-b border-gray-100 text-sm"><td class="py-3 text-slate-800">${i.title} <div class="text-[10px] text-gray-400">SKU: ${i.sku || 'N/A'}</div></td><td class="py-3 text-center text-slate-600">${i.qty}</td><td class="py-3 text-right text-slate-600">₦${Number(i.price).toLocaleString()}</td><td class="py-3 text-right font-bold text-slate-900">₦${i.total.toLocaleString()}</td></tr>`; });
         const stampColor = tx.payment?.status === 'Paid' ? 'text-green-600 border-green-600' : 'text-orange-500 border-orange-500'; const displayDate = new Date(tx.date).toLocaleDateString();
+        const subtotal = tx.total - (tx.shippingFee || 0);
 
         document.getElementById('invoice-paper').innerHTML = `
             <div class="flex justify-between items-start border-b border-gray-200 pb-6 mb-6"><div><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 bg-[#061224] rounded flex items-center justify-center text-white font-black text-lg shadow-md">B</div><div class="font-bold text-xl tracking-tight text-[#061224]">Bold<span class="text-orange-500">.ng</span></div></div><p class="text-xs text-gray-500 leading-relaxed">${platformSettings.address.replace(/\n/g, '<br>')}<br>${platformSettings.email}</p></div><div class="text-right"><h1 class="text-4xl font-black text-gray-200 uppercase tracking-widest mb-1">Invoice</h1><p class="text-sm font-bold text-slate-800">#${txId}</p><p class="text-xs text-gray-500">Date: ${displayDate}</p></div></div>
             <div class="grid grid-cols-2 gap-8 mb-8"><div><h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Billed To:</h3><p class="text-sm font-bold text-slate-800">${tx.customer?.name}</p><p class="text-xs text-slate-600 mt-1">${tx.customer?.email || ''}<br>${tx.customer?.phone}</p><p class="text-xs text-slate-600 mt-1">${tx.customer?.address}<br>${tx.customer?.city ? tx.customer.city + ', ' : ''}${tx.customer?.state || ''}</p></div><div class="text-right"><div class="inline-block border-2 ${stampColor} px-4 py-2 rounded-lg text-lg font-black uppercase tracking-widest transform rotate-[-5deg] opacity-80 mt-4">${tx.payment?.status}</div></div></div>
             <table class="w-full mb-8"><thead><tr class="border-b-2 border-gray-800 text-left text-xs text-gray-500 uppercase tracking-wider"><th class="py-2 font-bold">Item Description</th><th class="py-2 font-bold text-center">Qty</th><th class="py-2 font-bold text-right">Unit Price</th><th class="py-2 font-bold text-right">Total</th></tr></thead><tbody>${invoiceItems}</tbody></table>
-            <div class="flex justify-end border-t border-gray-200 pt-4 mb-8"><div class="w-1/2 md:w-1/3"><div class="flex justify-between text-sm text-gray-600 mb-2"><span>Subtotal:</span> <span>₦${tx.total.toLocaleString()}</span></div><div class="flex justify-between text-sm text-gray-600 mb-2"><span>Tax / Shipping:</span> <span>₦0</span></div><div class="flex justify-between text-lg font-black text-slate-900 border-t border-gray-200 pt-2 mt-2"><span>Total:</span> <span>₦${tx.total.toLocaleString()}</span></div></div></div>
+            <div class="flex justify-end border-t border-gray-200 pt-4 mb-8"><div class="w-1/2 md:w-1/3"><div class="flex justify-between text-sm text-gray-600 mb-2"><span>Subtotal:</span> <span>₦${subtotal.toLocaleString()}</span></div><div class="flex justify-between text-sm text-gray-600 mb-2"><span>Shipping Fee:</span> <span>₦${(tx.shippingFee || 0).toLocaleString()}</span></div><div class="flex justify-between text-lg font-black text-slate-900 border-t border-gray-200 pt-2 mt-2"><span>Total:</span> <span>₦${tx.total.toLocaleString()}</span></div></div></div>
             <div class="text-center text-xs text-gray-400 border-t border-gray-100 pt-6 mt-12"><p class="font-bold text-slate-600 mb-1">Thank you for shopping with Bold.ng!</p><p>If you have any questions concerning this invoice, please contact our support.</p></div>
         `; document.getElementById('view-invoice').classList.remove('hidden');
     }
@@ -1035,7 +1153,7 @@
         if(!window.db) return; 
         try { 
             const orderId = Date.now().toString(); 
-            const orderData = { id: orderId, items: cart, total: info.amount, status: info.status === 'Paid' ? 'Processing' : 'Pending', payment: info, customer: customer, date: new Date().toISOString() }; 
+            const orderData = { id: orderId, items: cart, total: info.amount, shippingFee: info.shipping || 0, status: info.status === 'Paid' ? 'Processing' : 'Pending', payment: info, customer: customer, date: new Date().toISOString() }; 
             await window.db.collection('orders').doc(orderId).set(orderData); 
             const vendors = [...new Set(cart.map(item => item.sellerId))]; const batch = window.db.batch(); 
             vendors.forEach(vendorEmail => { 
@@ -1052,7 +1170,7 @@
             document.getElementById('success-message').innerText = successMsg;
             const invoiceBtn = document.getElementById('btn-success-invoice'); if(invoiceBtn) { invoiceBtn.onclick = function() { generateInvoice(orderData); }; }
             
-            window.location.hash = 'success'; // Triggers routing naturally!
+            window.location.hash = 'success';
             const btn = document.getElementById('btn-pay'); btn.innerHTML = `<i data-lucide="lock" class="w-5 h-5"></i> Confirm Order`; btn.disabled = false; 
         } catch (err) { console.error(err); alert("Error saving order"); } 
     }
