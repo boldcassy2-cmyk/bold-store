@@ -235,11 +235,18 @@
 
         <!-- VENDOR SIGNUP VIEW -->
         <div id="view-vendor-signup" class="hidden p-6 min-h-screen bg-white view-section">
-            <button type="button" onclick="nav('account')" class="mb-6 font-bold text-gray-400 flex items-center gap-2 hover:text-orange-500 transition"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
+            <button type="button" onclick="goBack()" class="mb-6 font-bold text-gray-400 flex items-center gap-2 hover:text-orange-500 transition"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
             <h2 class="text-3xl font-black mb-2 text-slate-900">Start Selling</h2>
             <p class="text-gray-500 mb-6">Join the Bold.ng Marketplace and sell to thousands.</p>
-            <div id="reg-error" class="hidden bg-red-50 text-red-600 border border-red-200 p-4 rounded-xl text-xs mb-6 font-bold flex items-start gap-2 shadow-sm"><i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i><span id="reg-error-text">Error message goes here.</span></div>
+            
+            <div id="reg-error" class="hidden bg-red-50 text-red-600 border border-red-200 p-4 rounded-xl text-xs mb-6 font-bold flex items-start gap-2 shadow-sm">
+                <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+                <span id="reg-error-text">Error message goes here.</span>
+            </div>
+            
             <div class="space-y-4 mb-8">
+                <!-- 1. Store Info -->
+                <h3 class="text-[10px] font-bold text-blue-600 uppercase tracking-widest border-b border-blue-100 pb-1">Store Information</h3>
                 <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1 block mb-1">Store Name</label><input id="reg-store" class="input !mb-0" placeholder="e.g. Zara Tech, Jane's Books"></div>
                 <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1 block mb-1">Email Address</label><input id="reg-email" class="input !mb-0" type="email" placeholder="your@email.com"></div>
                 <div>
@@ -249,8 +256,19 @@
                         <button type="button" onclick="togglePass('reg-pass', 'reg-eye', 'reg-eye-off')" class="absolute right-4 top-[14px] text-gray-400 hover:text-orange-500 transition"><span id="reg-eye"><i data-lucide="eye" class="w-5 h-5"></i></span><span id="reg-eye-off" class="hidden"><i data-lucide="eye-off" class="w-5 h-5"></i></span></button>
                     </div>
                 </div>
+
+                <!-- 2. Bank Details (NEW) -->
+                <h3 class="text-[10px] font-bold text-green-600 uppercase tracking-widest border-b border-green-100 pb-1 mt-6">Payout Details (For Paystack)</h3>
+                <p class="text-[10px] text-gray-500 mb-2 leading-relaxed">Please provide your valid bank details. This is where your sales revenue will be remitted securely.</p>
+                
+                <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1 block mb-1">Bank Name</label><input id="reg-bank-name" class="input !mb-0" placeholder="e.g. GTBank, UBA, Zenith, Opay"></div>
+                <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1 block mb-1">10-Digit Account Number</label><input id="reg-acc-num" type="number" class="input !mb-0 font-mono tracking-widest" placeholder="0123456789"></div>
+                <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-1 block mb-1">Account Holder Name</label><input id="reg-acc-name" class="input !mb-0" placeholder="Exact name registered on account"></div>
             </div>
-            <button type="button" id="btn-reg" onclick="registerVendor()" class="w-full bg-orange-600 text-white py-4 rounded-xl font-bold shadow-xl hover:bg-[#061224] transition-colors flex justify-center items-center gap-2 text-lg">Create Seller Account <i data-lucide="check-circle" class="w-5 h-5"></i></button>
+            
+            <button type="button" id="btn-reg" onclick="registerVendor()" class="w-full bg-orange-600 text-white py-4 rounded-xl font-bold shadow-xl hover:bg-[#061224] transition-colors flex justify-center items-center gap-2 text-lg">
+                Create Seller Account <i data-lucide="check-circle" class="w-5 h-5"></i>
+            </button>
         </div>
 
         <!-- 5. DASHBOARD -->
@@ -913,7 +931,43 @@
     window.togglePass = function(inputId, eyeId, eyeOffId) { const input = document.getElementById(inputId); const eye = document.getElementById(eyeId); const eyeOff = document.getElementById(eyeOffId); if(input.type === 'password') { input.type = 'text'; eye.classList.add('hidden'); eyeOff.classList.remove('hidden'); } else { input.type = 'password'; eye.classList.remove('hidden'); eyeOff.classList.add('hidden'); } }
 
     window.doLogin = async function() { hideAuthError('login-error'); const email = document.getElementById('login-email').value.toLowerCase(); const pass = document.getElementById('login-pass').value; if(!email || !pass) return showAuthError('login-error', 'login-error-text', 'Please enter your email and password.'); const btn = document.getElementById('btn-login'); const originalHtml = btn.innerHTML; btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Authenticating...`; btn.disabled = true; lucide.createIcons(); try { await window.auth.signInWithEmailAndPassword(email, pass); showToast("Logged in successfully"); } catch(err) { const adminEmails = ['ceo@bold.ng', 'admin@bold.ng', 'doncassidy@bold.ng']; if (adminEmails.includes(email)) { try { await window.auth.createUserWithEmailAndPassword(email, pass); showToast("CEO Account System Initialized!"); } catch(createErr) { if (createErr.code === 'auth/email-already-in-use') showAuthError('login-error', 'login-error-text', 'Incorrect password. Try again.'); else showAuthError('login-error', 'login-error-text', 'System Error: ' + createErr.message); } } else { let errorMsg = "Login failed. Please check your credentials."; if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') errorMsg = "No account found with this email. Please register as a seller first."; if (err.code === 'auth/wrong-password') errorMsg = "Incorrect password. Please try again."; showAuthError('login-error', 'login-error-text', errorMsg); } } finally { btn.innerHTML = originalHtml; btn.disabled = false; lucide.createIcons(); } }
-    window.registerVendor = async function() { hideAuthError('reg-error'); const store = document.getElementById('reg-store').value; const email = document.getElementById('reg-email').value.toLowerCase(); const pass = document.getElementById('reg-pass').value; if(!store || !email || !pass) return showAuthError('reg-error', 'reg-error-text', 'All fields are required to open a store.'); if(pass.length < 6) return showAuthError('reg-error', 'reg-error-text', 'Password must be at least 6 characters long.'); const btn = document.getElementById('btn-reg'); const originalHtml = btn.innerHTML; btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Creating Store...`; btn.disabled = true; lucide.createIcons(); try { const cred = await window.auth.createUserWithEmailAndPassword(email, pass); await window.db.collection('users').doc(email).set({ storeName: store, email: email, role: 'vendor', uid: cred.user.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); showToast("Store Created!"); } catch(err) { let errorMsg = "Registration Failed."; if(err.code === 'auth/email-already-in-use') errorMsg = "An account with this email already exists. Try signing in."; showAuthError('reg-error', 'reg-error-text', errorMsg); } finally { btn.innerHTML = originalHtml; btn.disabled = false; lucide.createIcons(); } }
+    
+    // PERFECTED VENDOR REGISTRATION WITH BANK DETAILS
+    window.registerVendor = async function() { 
+        hideAuthError('reg-error'); 
+        const store = document.getElementById('reg-store').value; 
+        const email = document.getElementById('reg-email').value.toLowerCase(); 
+        const pass = document.getElementById('reg-pass').value; 
+        const bankName = document.getElementById('reg-bank-name').value;
+        const accNum = document.getElementById('reg-acc-num').value;
+        const accName = document.getElementById('reg-acc-name').value;
+
+        if(!store || !email || !pass || !bankName || !accNum || !accName) return showAuthError('reg-error', 'reg-error-text', 'All fields (including bank details) are required to open a verified store.'); 
+        if(pass.length < 6) return showAuthError('reg-error', 'reg-error-text', 'Password must be at least 6 characters long.'); 
+        if(accNum.length !== 10) return showAuthError('reg-error', 'reg-error-text', 'Please enter a valid 10-digit Nigerian account number.');
+
+        const btn = document.getElementById('btn-reg'); const originalHtml = btn.innerHTML; btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Creating Store...`; btn.disabled = true; lucide.createIcons(); 
+        
+        try { 
+            const cred = await window.auth.createUserWithEmailAndPassword(email, pass); 
+            await window.db.collection('users').doc(email).set({ 
+                storeName: store, 
+                email: email, 
+                role: 'vendor', 
+                uid: cred.user.uid, 
+                bankDetails: { bankName: bankName, accountNumber: accNum, accountName: accName },
+                createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+            }); 
+            showToast("Store Created Successfully!"); 
+        } catch(err) { 
+            let errorMsg = "Registration Failed."; 
+            if(err.code === 'auth/email-already-in-use') errorMsg = "An account with this email already exists. Try signing in."; 
+            showAuthError('reg-error', 'reg-error-text', errorMsg); 
+        } finally { 
+            btn.innerHTML = originalHtml; btn.disabled = false; lucide.createIcons(); 
+        } 
+    }
+    
     window.logout = function() { window.auth.signOut().then(() => { currentUser = null; nav('home'); showToast("Securely logged out."); }); }
 
     window.toggleDigitalMode = function(isDigital) { if(isDigital) { document.getElementById('brand-field').classList.add('hidden'); document.getElementById('stock-field').classList.add('hidden'); document.getElementById('sku-field').classList.add('hidden'); document.getElementById('condition-field').classList.add('hidden'); document.getElementById('digital-url-section').classList.remove('hidden'); document.getElementById('p-cat-upload').value = 'ebooks'; toggleCategorySpecs('ebooks'); } else { document.getElementById('brand-field').classList.remove('hidden'); document.getElementById('stock-field').classList.remove('hidden'); document.getElementById('sku-field').classList.remove('hidden'); document.getElementById('condition-field').classList.remove('hidden'); document.getElementById('digital-url-section').classList.add('hidden'); document.getElementById('p-cat-upload').value = ''; toggleCategorySpecs(''); } }
@@ -992,42 +1046,49 @@
 
     function loadFinance() { if(!state_orders || !currentUser) return; let total = 0, pending = 0, html = ''; state_orders.forEach(d => { if(d.payment?.status === 'Paid') total += d.total; else if(d.payment?.status !== 'Rejected') pending += d.total; const statusColor = d.payment?.status === 'Paid' ? 'text-green-600' : 'text-orange-500'; html += `<div class="flex justify-between items-center py-3 border-b border-gray-50 cursor-pointer" onclick="window.location.hash='tx/${d.docId}'"><div><div class="text-xs font-bold">#${d.docId.slice(0,6)}</div><div class="text-[10px] text-gray-400">${d.date.split('T')[0]} • ${d.customer?.name||'Guest'}</div></div><div class="text-right"><div class="text-sm font-bold">₦${d.total.toLocaleString()}</div><div class="text-[10px] font-bold ${statusColor}">${d.payment?.status}</div></div></div>`; }); document.getElementById('fin-total').innerText = '₦' + total.toLocaleString(); document.getElementById('fin-pending').innerText = '₦' + pending.toLocaleString(); document.getElementById('fin-list').innerHTML = html || '<div class="text-center py-10 text-gray-400">No sales yet.</div>'; }
     window.verifyTransaction = function(id) { if(confirm("Confirm Payment?")) window.db.collection('orders').doc(id).update({'payment.status': 'Paid', status: 'Processing'}); goBack(); }
-    async function loadAdmin() { if (!currentUser || currentUser.role !== 'admin') return; let totalRev = 0; let ordersHtml = ''; if(state_orders && state_orders.length > 0) { state_orders.forEach(d => { if(d.payment?.status === 'Paid') totalRev += d.total; const statusColor = d.payment?.status === 'Paid' ? 'text-green-600' : 'text-orange-500'; ordersHtml += `<div class="flex justify-between items-center py-3 px-4 border-b border-gray-50 cursor-pointer" onclick="window.location.hash='tx/${d.docId}'"><div><div class="text-xs font-bold">#${d.docId.slice(0,6)}</div><div class="text-[10px] text-gray-400">${d.date.split('T')[0]} • ${d.customer?.name||'Guest'}</div></div><div class="text-right"><div class="text-sm font-bold">₦${d.total.toLocaleString()}</div><div class="text-[10px] font-bold ${statusColor}">${d.payment?.status}</div></div></div>`; }); } document.getElementById('admin-total-rev').innerText = '₦' + totalRev.toLocaleString(); document.getElementById('admin-list').innerHTML = ordersHtml || '<div class="p-4 text-center text-xs text-gray-400">No orders yet.</div>'; try { const usersSnap = await window.db.collection('users').where('role', '==', 'vendor').get(); document.getElementById('admin-total-vendors').innerText = usersSnap.size; let vendorsHtml = ''; usersSnap.forEach(doc => { const v = doc.data(); const joinedDate = v.createdAt?.toDate ? v.createdAt.toDate().toLocaleDateString() : 'Recently'; vendorsHtml += `<div class="flex justify-between items-center py-3 px-4 border-b border-gray-50"><div><div class="text-sm font-bold text-slate-800">${v.storeName}</div><div class="text-[10px] text-gray-500">${v.email}</div></div><div class="text-right"><div class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">Joined: ${joinedDate}</div></div></div>`; }); document.getElementById('admin-vendor-list').innerHTML = vendorsHtml || '<div class="p-4 text-center text-xs text-gray-400">No vendors found.</div>'; } catch (error) { console.error("Error loading vendors:", error); document.getElementById('admin-vendor-list').innerHTML = '<div class="p-4 text-center text-xs text-red-400">Error loading vendors.</div>'; } }
-    function renderLogistics() { document.getElementById('logistics-list').innerHTML = state_orders?.filter(o=>o.status!=='Delivered').map(o=>`<div class="card mb-3 border-l-4 border-orange-500 p-3"><div class="flex justify-between font-bold text-sm"><span>#${o.docId.slice(0,4)}</span><span class="text-orange-500">${o.status}</span></div><div class="text-xs mt-2">${o.customer?.address}</div><button onclick="window.db.collection('orders').doc('${o.docId}').update({status:'Delivered'})" class="mt-3 w-full bg-[#061224] text-white text-xs py-2 rounded">Mark Delivered</button></div>`).join('') || '<p>No pending deliveries</p>'; }
-
-    window.addToCart = function(id, btnElement) { 
-        cart.push(products.find(x => x.id === id)); 
-        updateCart(); 
+    
+    // UPDATED ADMIN LOAD TO SHOW VENDOR BANK DETAILS
+    async function loadAdmin() { 
+        if (!currentUser || currentUser.role !== 'admin') return; 
+        let totalRev = 0; let ordersHtml = ''; 
+        if(state_orders && state_orders.length > 0) { 
+            state_orders.forEach(d => { 
+                if(d.payment?.status === 'Paid') totalRev += d.total; 
+                const statusColor = d.payment?.status === 'Paid' ? 'text-green-600' : 'text-orange-500'; 
+                ordersHtml += `<div class="flex justify-between items-center py-3 px-4 border-b border-gray-50 cursor-pointer" onclick="window.location.hash='tx/${d.docId}'"><div><div class="text-xs font-bold">#${d.docId.slice(0,6)}</div><div class="text-[10px] text-gray-400">${d.date.split('T')[0]} • ${d.customer?.name||'Guest'}</div></div><div class="text-right"><div class="text-sm font-bold">₦${d.total.toLocaleString()}</div><div class="text-[10px] font-bold ${statusColor}">${d.payment?.status}</div></div></div>`; 
+            }); 
+        } 
+        document.getElementById('admin-total-rev').innerText = '₦' + totalRev.toLocaleString(); 
+        document.getElementById('admin-list').innerHTML = ordersHtml || '<div class="p-4 text-center text-xs text-gray-400">No orders yet.</div>'; 
         
-        // Advanced Visual Feedback
-        if (btnElement) {
-            const originalHtml = btnElement.innerHTML;
-            const isLarge = btnElement.classList.contains('text-lg');
-            
-            // Turn button green and show checkmark
-            btnElement.innerHTML = `<i data-lucide="check-circle" class="${isLarge ? 'w-5 h-5' : 'w-4 h-4'}"></i> <span class="btn-text font-black">Added!</span>`;
-            btnElement.style.backgroundColor = '#16a34a'; // Green 600
-            btnElement.style.color = 'white';
-            lucide.createIcons();
-
-            // Make Cart Icons "Jump"
-            const navCartIcon = document.querySelector('#nav-cart i');
-            const headerCartIcon = document.querySelector('header .lucide-shopping-bag');
-            if(navCartIcon) { navCartIcon.classList.add('animate-bounce', 'text-orange-500'); navCartIcon.classList.remove('text-gray-500'); }
-            if(headerCartIcon) { headerCartIcon.classList.add('animate-bounce', 'text-white'); headerCartIcon.classList.remove('text-gray-300'); }
-
-            setTimeout(() => {
-                btnElement.innerHTML = originalHtml;
-                btnElement.style.backgroundColor = '';
-                btnElement.style.color = '';
-                lucide.createIcons();
+        try { 
+            const usersSnap = await window.db.collection('users').where('role', '==', 'vendor').get(); 
+            document.getElementById('admin-total-vendors').innerText = usersSnap.size; 
+            let vendorsHtml = ''; 
+            usersSnap.forEach(doc => { 
+                const v = doc.data(); 
+                const joinedDate = v.createdAt?.toDate ? v.createdAt.toDate().toLocaleDateString() : 'Recently'; 
                 
-                if(navCartIcon && window.location.hash !== '#cart') { navCartIcon.classList.remove('animate-bounce', 'text-orange-500'); navCartIcon.classList.add('text-gray-500'); }
-                if(headerCartIcon) { headerCartIcon.classList.remove('animate-bounce', 'text-white'); headerCartIcon.classList.add('text-gray-300'); }
-            }, 1200);
-        } else {
-            showToast("Item added to cart!");
-        }
+                // Construct bank details display if they exist
+                let bankDisplay = '';
+                if(v.bankDetails) {
+                    bankDisplay = `<div class="mt-2 bg-blue-50 p-2 rounded border border-blue-100"><div class="text-[9px] text-blue-500 uppercase tracking-wider font-bold mb-0.5">Payout Account</div><div class="text-xs font-bold text-slate-800 font-mono select-all">${v.bankDetails.accountNumber} - ${v.bankDetails.bankName}</div><div class="text-[10px] text-slate-600 truncate">${v.bankDetails.accountName}</div></div>`;
+                }
+
+                vendorsHtml += `
+                <div class="py-4 px-4 border-b border-gray-50">
+                    <div class="flex justify-between items-start mb-1">
+                        <div><div class="text-sm font-bold text-slate-800">${v.storeName}</div><div class="text-[10px] text-gray-500">${v.email}</div></div>
+                        <div class="text-right"><div class="text-[9px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">Joined: ${joinedDate}</div></div>
+                    </div>
+                    ${bankDisplay}
+                </div>`; 
+            }); 
+            document.getElementById('admin-vendor-list').innerHTML = vendorsHtml || '<div class="p-4 text-center text-xs text-gray-400">No vendors found.</div>'; 
+        } catch (error) { 
+            console.error("Error loading vendors:", error); 
+            document.getElementById('admin-vendor-list').innerHTML = '<div class="p-4 text-center text-xs text-red-400">Error loading vendors.</div>'; 
+        } 
     }
     window.removeFromCart = function(id) { const index = cart.findIndex(p => p.id === id); if (index > -1) { cart.splice(index, 1); updateCart(); renderCartUI(); } }
 
